@@ -1,0 +1,112 @@
+<mvc:View xmlns:feeds="sap.viz.ui5.controls.common.feeds" xmlns:data="sap.viz.ui5.data" 
+    xmlns:viz="sap.viz.ui5.controls" 
+    xmlns:fb="sap.ui.comp.filterbar" 
+    xmlns:variants="sap.ui.comp.variants" 
+    xmlns:cards="sap.f.cards" 
+    xmlns:form="sap.ui.layout.form"
+    xmlns:f="sap.f" 
+    controllerName="gw.controller.SalesOrder"
+    xmlns:mvc="sap.ui.core.mvc" 
+    xmlns="sap.m">
+<f:DynamicPage>
+    <f:title>
+        <f:DynamicPageTitle>
+            <f:heading>
+                <variants:VariantManagement
+                    showExecuteOnSelection="true"
+                    id="variantManager" 
+                    save="onVariantSave"
+                    select="onSelectVariant"
+                >
+                </variants:VariantManagement>
+            </f:heading>        
+        </f:DynamicPageTitle>
+    </f:title>
+    <f:header>
+        <f:DynamicPageHeader>
+            <fb:FilterBar id="filterbar"> 
+                <fb:filterGroupItems>
+                        <fb:FilterGroupItem id="CustomerID" visibleInFilterBar="true" groupName="A" name="CustomerID" label="CustomerID">
+                            <fb:control>
+                                <Input value="{partner>BusinessPartnerID}"/>
+                            </fb:control>
+                        </fb:FilterGroupItem>
+                        <fb:FilterGroupItem  visibleInFilterBar="true" groupName="B" name="CustomerName" label="CustomerName">
+                            <fb:control>
+                                <Input value="{partner>CompanyName}"/>
+                            </fb:control>
+                        </fb:FilterGroupItem>
+                    </fb:filterGroupItems>
+            </fb:FilterBar>
+        </f:DynamicPageHeader>
+    </f:header>
+    <f:content>
+        <f:GridContainer width="100%">
+            <f:layout>
+                <f:GridContainerSettings rowSize="84px" columnSize="84px" gap="8px" />
+            </f:layout>
+			<f:layoutXS>
+				<f:GridContainerSettings rowSize="70px" columnSize="70px" gap="8px" />
+			</f:layoutXS>
+            <f:Card>
+                <f:layoutData>
+                    <f:GridContainerItemLayoutData  rows="5" columns="5" />
+                </f:layoutData>
+                <f:header>
+                    <cards:Header title="Lifecycle"/>
+                </f:header>
+                <f:content>
+                    <ScrollContainer vertical="true" width="100%" height="300px">
+                        <List items="{sales>/status}">
+                            <items>
+                                <CustomListItem>
+                                    <HBox justifyContent="SpaceBetween" class="sapUiSmallMargin">
+                                        <Text text="{sales>SalesOrderID}"/>
+                                        <ObjectStatus 
+                                            text="{sales>LifecycleStatusDescription}" 
+                                            state="{path : 'sales>LifecycleStatus', formatter : '.formatter.statusFormat'}"/>
+                                    </HBox>
+                                </CustomListItem>
+                            </items>
+                        </List>
+                    </ScrollContainer>                    
+                </f:content>
+            </f:Card>
+            <f:Card>
+                <f:layoutData>
+                    <f:GridContainerItemLayoutData  rows="7" columns="9" />
+                </f:layoutData>
+                <f:header>
+                    <cards:Header title="Amount"/>
+                </f:header>
+                <f:content>
+                    <HBox width="400px">
+                        <viz:Popover id="idPopOver"/>
+                        <viz:VizFrame id="oVizFrame" width="700px" height="500px" vizType="column" uiConfig="{applicationSet:'fiori'}">
+                            <viz:dataset>
+                                <data:FlattenedDataset data="{sales>/amount}">
+                                    <data:dimensions>
+                                        <data:DimensionDefinition name="PartnerID" value="{sales>CustomerID}" />
+                                    </data:dimensions>
+                                    <data:measures>
+                                        <data:MeasureDefinition name="GrossAmount" value="{sales>GrossAmount}"/>
+                                        <data:MeasureDefinition name="NetAmount" value="{sales>NetAmount}"/>
+                                        <data:MeasureDefinition name="TaxAmount" value="{sales>TaxAmount}"/>
+                                    </data:measures>
+                                </data:FlattenedDataset>
+                            </viz:dataset>
+                            <viz:feeds>
+                                <feeds:FeedItem uid="valueAxis" type="Measure" values="GrossAmount,NetAmount,TaxAmount"/>
+                                <!-- <feeds:FeedItem uid="valueAxis" type="Measure" values="NetAmount"/>
+                                <feeds:FeedItem uid="valueAxis" type="Measure" values="TaxAmount"/> -->
+                                <feeds:FeedItem id='categoryAxisFeed' uid="categoryAxis" type="Dimension" values="PartnerID" />
+                            </viz:feeds>                        
+                        </viz:VizFrame>     
+                    </HBox>
+                            
+                </f:content>
+            </f:Card>
+        </f:GridContainer>
+    </f:content>
+</f:DynamicPage>
+</mvc:View>

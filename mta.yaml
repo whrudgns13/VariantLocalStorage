@@ -1,0 +1,28 @@
+ID: gw
+_schema-version: 3.2.0
+version: 0.0.1
+parameters:
+  enable-parallel-deployments: true
+modules:
+  - name: gw
+    type: nodejs
+    path: dist
+    parameters:
+      disk-quota: 512M
+      memory: 512M
+    requires:
+      - name: gw_destination
+    build-parameters:
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:ui --prefix ..
+resources:
+  - name: gw_destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service-plan: lite
+      service: destination
+      config:
+        HTML5Runtime_enabled: true
+        version: 1.0.0

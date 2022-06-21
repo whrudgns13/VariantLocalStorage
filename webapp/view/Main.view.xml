@@ -1,0 +1,82 @@
+<mvc:View
+     xmlns:variants="sap.ui.comp.variants" xmlns:f="sap.f" xmlns:core="sap.ui.core" 
+    controllerName="gw.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc" 
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:fb="sap.ui.comp.filterbar"
+    >
+    <App id="app">
+        <pages>
+            <f:DynamicPage id="page">
+                <f:title>
+                    <f:DynamicPageTitle>
+                        <f:heading>
+                            <variants:VariantManagement
+                                showExecuteOnSelection="true"
+                                id="variantManager" 
+                                save="onVariantSave"
+                                select="onSelectVariant"
+                                >
+                            <!-- <variants:variantItems>
+                                <variants:VariantItem author="me" text="a1234"></variants:VariantItem>
+                                <variants:VariantItem author="me2" text="a32"></variants:VariantItem>
+                            </variants:variantItems> -->
+                            </variants:VariantManagement>
+                        </f:heading>        
+                    </f:DynamicPageTitle>
+                </f:title>
+                <f:header>
+                    <f:DynamicPageHeader pinnable="true">
+                        <f:content>
+                            <fb:FilterBar  id="filterbar" reset="onReset" search="onSearch">
+                                <fb:filterGroupItems>
+                                    <fb:FilterGroupItem id="companyName" visibleInFilterBar="true" groupName="A" name="CompanyName" label="CompanyName">
+                                        <fb:control>
+                                            <Input />
+                                        </fb:control>
+                                    </fb:FilterGroupItem>
+                                    <fb:FilterGroupItem  visibleInFilterBar="true" groupName="B" name="Currency" label="CurrencyCode">
+                                        <fb:control>
+                                            <ComboBox id="currency" items="{fb>/currency}">
+                                                <items>
+                                                    <core:Item key="{fb>key}" text="{fb>text}"/>
+                                                </items>
+                                            </ComboBox>
+                                        </fb:control>
+                                    </fb:FilterGroupItem>
+                                </fb:filterGroupItems>
+                            </fb:FilterBar> 
+                        </f:content>
+                    </f:DynamicPageHeader>
+                </f:header>
+                <f:content>  
+                   <Table id="partnerTable" items="{partner>/}">
+                       <columns>
+                           <Column hAlign="Begin">
+                                <Text text="CompanyName"/>
+                            </Column>
+                            <Column hAlign="Begin">
+                                <Text text="EmailAddress"/>
+                            </Column>
+                            <Column hAlign="Begin">
+                                <Text text="FaxNumber"/>
+                            </Column>
+                            <Column hAlign="Begin">
+                                <Text text="Detail"/>
+                            </Column>
+                       </columns>
+                       <items>
+                           <ColumnListItem type="Active" press="onTableItemPress">
+                                <Text text="{partner>CompanyName}"/>
+                                <Text text="{partner>EmailAddress}"/>
+                                <Text text="{partner>FaxNumber}"/>
+                                <Button text="..." press="onDetail"/>
+                           </ColumnListItem>
+                       </items>
+                   </Table>
+                </f:content>
+            </f:DynamicPage>
+        </pages>        
+    </App>    
+</mvc:View>

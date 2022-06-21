@@ -1,0 +1,31 @@
+<core:FragmentDefinition xmlns:form="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+>
+<Dialog title="ID {partnerDetail>/BusinessPartnerID}">
+    <content>
+        <form:SimpleForm layout="ResponsiveGridLayout">
+            <form:content>
+                <Label text="CompanyName"/>
+                <Text text="{partnerDetail>/CompanyName}"/>
+                <Label text="Address"/>
+                <Text text="{partnerDetail>/Address}"/>
+                <Label text="WebAddress"/>
+                <Text text="{partnerDetail>/WebAddress}"/>
+                <Label text="EmailAddress"/>
+                <Text text="{partnerDetail>/EmailAddress}"/>                
+                <Label text="PhoneNumber"/>
+                <Text text="{partnerDetail>/PhoneNumber}"/>                
+                <Label text="FaxNumber"/>
+                <Text text="{partnerDetail>/FaxNumber}"/>                
+                <Label text="CurrencyCode"/>
+                <Text text="{partnerDetail>/CurrencyCode}"/>              
+            </form:content>
+        </form:SimpleForm>
+    </content>
+    <endButton>
+        <Button text="Close" press="onDetailClose"/>
+    </endButton>
+</Dialog>
+
+</core:FragmentDefinition>
