@@ -17,6 +17,7 @@
                                 id="variantManager" 
                                 save="onVariantSave"
                                 select="onSelectVariant"
+                                manage="onManageChange"
                                 >
                             <!-- <variants:variantItems>
                                 <variants:VariantItem author="me" text="a1234"></variants:VariantItem>

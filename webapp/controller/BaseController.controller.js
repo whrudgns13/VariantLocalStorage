@@ -13,6 +13,9 @@ sap.ui.define([
             onInit: function () {
 
             },
+            onAfterRendering : function(){
+                
+            },
             setVariant: function () {
                 let oView = this.getView();
                 this.filterBar = oView.byId("filterbar");
@@ -20,7 +23,11 @@ sap.ui.define([
                 this.variantManager = oView.byId("variantManager");
                 this.variantData = this.getLocalStorage();
 
-                if (this.variantData) {
+                if (this.variantData) {                   
+                    if(this.variantData.defaultKey){
+                        this.variantManager.setDefaultVariantKey(this.variantData.defaultKey);
+                        this.variantManager.setInitialSelectionKey(this.variantData.defaultKey);
+                    }
                     this.variantData.variantList.forEach(item => {
                         let oVariantItem = new VariantItem({
                             author: item.userId,
@@ -75,7 +82,7 @@ sap.ui.define([
                         value: getFilterItemValue(oFilterControl, sFilterElementName)
                     });
                 });
-                this.setLocalStorage(variantObj);
+                this.createVariantData(variantObj);
 
                 function getFilterItemValue(oControl, sElementName){
                     switch (sElementName) {
@@ -93,7 +100,32 @@ sap.ui.define([
                 let sFilterElementName = oFilterControl.getMetadata().getElementName();
                 return {sFilterLabel, oFilterControl, sFilterElementName};
             },
-            setLocalStorage: function (variantObj) {
+            onManageChange : function(oEvent){
+                let aVariantRenameObj = oEvent.getParameter("renamed");
+                let aDeleteVariantKey = oEvent.getParameter("deleted");
+                let sDefaultVariantKey = oEvent.getParameter("def");
+
+                if(aDeleteVariantKey.length){
+                    aDeleteVariantKey.forEach(deleteKey=>{
+                        this.variantData.variantList = this.variantData.variantList.filter(variant=>{
+                            return variant.key !== deleteKey
+                        });
+                    })                   
+                }
+
+                if(aVariantRenameObj.length){
+                    aVariantRenameObj.forEach(renameObj=>{
+                        let iSameIndex = this.variantData.variantList.findIndex(variant=> renameObj.key===variant.key);
+                        this.variantData.variantList[iSameIndex].title = renameObj.name;
+                    });
+                }
+
+                if(sDefaultVariantKey){
+                    this.variantData.defaultKey = sDefaultVariantKey
+                }
+                this.setLocalStorage();
+            },
+            createVariantData : function(variantObj){
                 let oViewId = this.getView().getId();
                 if (this.variantData?.viewId && this.variantData.viewId === oViewId) {
                     this.variantData.variantList.push(variantObj);
@@ -103,6 +135,10 @@ sap.ui.define([
                         variantList: [variantObj]
                     };
                 }
+                this.setLocalStorage();
+            },
+            setLocalStorage: function () {            
+                let oViewId = this.getView().getId();   
                 window.localStorage.setItem(oViewId, JSON.stringify(this.variantData));
             },
             getLocalStorage: function () {
