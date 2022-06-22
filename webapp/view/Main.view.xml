@@ -52,7 +52,14 @@
                     </f:DynamicPageHeader>
                 </f:header>
                 <f:content>  
-                   <Table id="partnerTable" items="{partner>/}">
+                   <Table id="partnerTable" headerText="Partner" items="{partner>/}">
+                        <headerToolbar>
+                            <OverflowToolbar >
+                                <Text text="Partner"/>
+                                <ToolbarSpacer/>
+                                <Button text="ExcelDownload" press="excelDownload"/>
+                            </OverflowToolbar>
+                        </headerToolbar>
                        <columns>
                            <Column hAlign="Begin">
                                 <Text text="CompanyName"/>

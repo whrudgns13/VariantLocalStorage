@@ -1,21 +1,17 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/core/Fragment",
-    "sap/ui/comp/variants/VariantItem"
+    "sap/ui/comp/variants/VariantItem",
+    'sap/ui/export/Spreadsheet',
+	'sap/ui/export/library'
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Fragment, VariantItem) {
+    function (Controller, Fragment, VariantItem, Spreadsheet, library) {
         "use strict";
 
         return Controller.extend("gw.controller.BaseController", {
-            onInit: function () {
-
-            },
-            onAfterRendering : function(){
-                
-            },
             setVariant: function () {
                 let oView = this.getView();
                 this.filterBar = oView.byId("filterbar");
@@ -147,6 +143,52 @@ sap.ui.define([
             },
             getRounter: function () {
                 return this.getOwnerComponent().getRouter();
+            },
+            excelDownload: function (oEvent) {
+                let oTable = oEvent.getSource().getParent().getParent();
+                var EdmType = library.EdmType;
+                let oView = this.getView();
+                let aCols = [];
+    
+                let oRowBinding = oTable.getBinding("items");
+                let oTableBindingInfo = oTable.getBindingInfo("items");
+                let sTableModel = oTableBindingInfo.model;
+                let oTamplateData = oTable.getModel(sTableModel).getData()[0];
+
+                for(let p in oTamplateData){
+                    let label = p;
+                    let property = p;
+                    let type;
+                    
+                    switch(typeof oTamplateData[p]){
+                        case "string" : type = EdmType.String 
+                        break;
+                        case "number" : type = EdmType.Number
+                        break;
+                        case "date" : type = EdmType.Date
+                        break;
+                    }
+
+                    if(!type) continue;
+                    
+                    aCols.push({label,property,type});
+                }
+
+                let oSettings = {
+                    workbook : {
+                        columns : aCols,
+                        hierarchyLevel : "Level"				
+                    },
+                    dataSource : oRowBinding,
+                    fileName : `${oTable.getHeaderText()}.xlsx`,
+                    worker : false
+                };
+                
+                let oSheet = new Spreadsheet(oSettings);
+                oSheet.build().finally(()=>{
+                    oSheet.destroy();
+                })
+            
             }
         });
     });
